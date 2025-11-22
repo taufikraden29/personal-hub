@@ -106,33 +106,125 @@
 
         .note-card {
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
-            min-height: 150px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 180px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .note-card:hover::before {
+            opacity: 1;
         }
 
         .note-card:hover {
-            transform: translateZ(20px) rotateX(-2deg);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .note-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .note-card .note-category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .note-card .note-content-preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .note-card .note-content-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 1.5em;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1));
         }
         
         @media (max-width: 767px) {
             .note-card {
-                min-height: 120px;
+                min-height: 150px;
             }
             
             .note-card:hover {
-                transform: none;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             }
         }
 
         .todo-item {
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 3px solid transparent;
+            position: relative;
         }
 
         .todo-item:hover {
-            transform: translateZ(10px);
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .todo-item.priority-high {
+            border-left-color: rgba(239, 68, 68, 0.6);
+        }
+
+        .todo-item.priority-medium {
+            border-left-color: rgba(245, 158, 11, 0.6);
+        }
+
+        .todo-item.priority-low {
+            border-left-color: rgba(34, 197, 94, 0.6);
+        }
+
+        .todo-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: #8b5cf6;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .todo-item input[type="checkbox"]:hover {
+            transform: scale(1.1);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+
+        .todo-item.completed:hover {
+            opacity: 0.8;
         }
 
         .pomodoro-circle {
@@ -192,11 +284,96 @@
 
         .habit-ring {
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .habit-ring::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .habit-ring:hover {
-            transform: rotateZ(10deg) scale(1.05);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .habit-ring:hover::before {
+            opacity: 1;
+        }
+
+        .habit-ring > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .habit-progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .habit-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            border-radius: 9999px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .habit-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .habit-streak-badge {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .habit-streak-badge::before {
+            content: '🔥';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1.5rem;
+            animation: fire-flicker 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fire-flicker {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
         }
 
         .calendar-day {
@@ -411,7 +588,7 @@
         <div class="text-center px-4">
             <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Mode Fokus Aktif</h2>
             <p class="text-white/80 mb-8 text-sm md:text-base">Hilangkan semua gangguan dan fokus pada tugas Anda</p>
-            <button onclick="toggleFocusMode()"
+            <button onclick="app.ui.toggleFocusMode()"
                 class="neumorphic px-6 md:px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
                 <i class="fas fa-times mr-2"></i>Keluar Mode Fokus
             </button>
@@ -425,14 +602,14 @@
     <div id="quick-notes-container"></div>
 
     <!-- Mobile Menu Toggle -->
-    <button id="mobile-menu-toggle" onclick="toggleMobileMenu()" 
+    <button id="mobile-menu-toggle" onclick="app.ui.toggleMobileMenu()" 
             class="lg:hidden fixed z-50 glass-morphism p-2.5 sm:p-3 rounded-xl text-white shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
             style="top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));">
         <i class="fas fa-bars text-lg"></i>
     </button>
 
     <!-- Mobile Menu Backdrop -->
-    <div id="mobile-backdrop" class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-backdrop" class="mobile-menu-backdrop" onclick="app.ui.toggleMobileMenu()"></div>
 
     <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen p-0 sm:p-2 md:p-4 gap-0 md:gap-4">
         <!-- Sidebar -->
@@ -445,14 +622,14 @@
                     </h1>
                     <p class="text-xs md:text-sm opacity-80">Catatan & Produktivitas</p>
                 </div>
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg">
+                <button onclick="app.ui.toggleMobileMenu()" class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
 
             <!-- Theme Toggle -->
             <div class="mb-4 md:mb-6">
-                <button onclick="toggleTheme()"
+                <button onclick="app.ui.toggleTheme()"
                     class="w-full neumorphic px-4 py-3 rounded-xl text-white hover:scale-105 transition-transform flex items-center justify-center gap-2 text-sm md:text-base min-h-[44px]">
                     <i id="theme-icon" class="fas fa-moon"></i>
                     <span id="theme-text">Mode Gelap</span>
@@ -460,32 +637,32 @@
             </div>
 
             <nav class="space-y-2 mb-4">
-                <button onclick="switchTab('notes')" id="notes-tab"
+                <button onclick="app.ui.switchTab('notes')" id="notes-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 tab-active flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-sticky-note w-4"></i>
                     <span>Catatan</span>
                 </button>
-                <button onclick="switchTab('todos')" id="todos-tab"
+                <button onclick="app.ui.switchTab('todos')" id="todos-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-tasks w-4"></i>
                     <span>To-Do List</span>
                 </button>
-                <button onclick="switchTab('pomodoro')" id="pomodoro-tab"
+                <button onclick="app.ui.switchTab('pomodoro')" id="pomodoro-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-clock w-4"></i>
                     <span>Pomodoro</span>
                 </button>
-                <button onclick="switchTab('habits')" id="habits-tab"
+                <button onclick="app.ui.switchTab('habits')" id="habits-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-chart-line w-4"></i>
                     <span>Habit Tracker</span>
                 </button>
-                <button onclick="switchTab('calendar')" id="calendar-tab"
+                <button onclick="app.ui.switchTab('calendar')" id="calendar-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-calendar w-4"></i>
                     <span>Kalender</span>
                 </button>
-                <button onclick="switchTab('mood')" id="mood-tab"
+                <button onclick="app.ui.switchTab('mood')" id="mood-tab"
                     class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
                     <i class="fas fa-smile w-4"></i>
                     <span>Mood Tracker</span>
@@ -494,12 +671,12 @@
 
             <!-- Quick Actions -->
             <div class="mt-4 md:mt-6 space-y-2">
-                <button onclick="addQuickNote()"
+                <button onclick="app.quickNotes.addNote()"
                     class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-sticky-note"></i>
                     Quick Note
                 </button>
-                <button onclick="toggleFocusMode()"
+                <button onclick="app.ui.toggleFocusMode()"
                     class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-brain"></i>
                     Focus Mode
@@ -508,19 +685,19 @@
 
             <!-- Data Management -->
             <div class="mt-4 md:mt-6 space-y-2">
-                <button onclick="exportData()"
+                <button onclick="app.dataManager.exportData()"
                     class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-download"></i>
                     Export Data
                 </button>
-                <button onclick="importData()"
+                <button onclick="app.dataManager.triggerImport()"
                     class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-upload"></i>
                     Import Data
                 </button>
             </div>
 
-            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleImport(event)">
+            <input type="file" id="import-file" accept=".json" style="display: none;">
 
             <div class="mt-auto pt-6 md:pt-8">
                 <div class="grid grid-cols-3 lg:grid-cols-1 gap-2 md:gap-3">
@@ -547,7 +724,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-6 gap-2 md:gap-3">
                     <h2 class="text-xl md:text-3xl font-bold text-white">Catatan Pribadi</h2>
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <select id="category-filter" onchange="filterByCategory()"
+                        <select id="category-filter" onchange="app.notes.filterByCategory(this.value)"
                             class="px-3 md:px-4 py-2 rounded-xl glass-morphism text-white outline-none text-sm md:text-base w-full sm:w-auto">
                             <option value="">Semua Kategori</option>
                             <option value="personal">Personal</option>
@@ -555,7 +732,7 @@
                             <option value="ideas">Ide</option>
                             <option value="important">Penting</option>
                         </select>
-                        <button onclick="addNote()"
+                        <button onclick="app.notes.openModal()"
                             class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
                             <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Catatan
                         </button>
@@ -565,7 +742,7 @@
                 <div class="mb-3 md:mb-4">
                     <input type="text" id="search-notes" placeholder="Cari catatan..."
                         class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
-                        onkeyup="searchNotes()">
+                        onkeyup="app.notes.search(this.value)">
                 </div>
 
                 <div id="notes-container"
@@ -579,7 +756,7 @@
             <div id="todos-section" class="tab-content flex-1 flex flex-col hidden">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
                     <h2 class="text-xl md:text-3xl font-bold text-white">To-Do List</h2>
-                    <button onclick="addTodo()"
+                    <button onclick="app.todos.addFromInput()"
                         class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
                         <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Task
                     </button>
@@ -589,7 +766,7 @@
                     <div class="flex flex-col md:flex-row gap-2">
                         <input type="text" id="new-todo-input" placeholder="Tambah task baru..."
                             class="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
-                            onkeypress="if(event.key === 'Enter') addTodo()">
+                            onkeypress="if(event.key === 'Enter') app.todos.addFromInput()">
                         <select id="todo-priority" class="px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white outline-none text-sm md:text-base">
                             <option value="low">Rendah</option>
                             <option value="medium" selected>Sedang</option>
@@ -631,30 +808,30 @@
                     </div>
 
                     <div class="flex gap-2 md:gap-4 mt-6 md:mt-8">
-                        <button onclick="startPomodoro()" id="pomodoro-start"
+                        <button onclick="app.pomodoro.start()" id="pomodoro-start"
                             class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-play mr-2"></i>Mulai
                         </button>
-                        <button onclick="pausePomodoro()" id="pomodoro-pause"
+                        <button onclick="app.pomodoro.pause()" id="pomodoro-pause"
                             class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform hidden text-sm md:text-base">
                             <i class="fas fa-pause mr-2"></i>Jeda
                         </button>
-                        <button onclick="resetPomodoro()"
+                        <button onclick="app.pomodoro.reset()"
                             class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-redo mr-2"></i>Reset
                         </button>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8 w-full max-w-lg px-4">
-                        <button onclick="setPomodoroTime(25)"
+                        <button onclick="app.pomodoro.setTime(25)"
                             class="glass-morphism px-6 py-3 rounded-xl text-white hover:bg-white/20 transition">
                             <i class="fas fa-briefcase mr-2"></i>Kerja 25m
                         </button>
-                        <button onclick="setPomodoroTime(5)"
+                        <button onclick="app.pomodoro.setTime(5)"
                             class="glass-morphism px-6 py-3 rounded-xl text-white hover:bg-white/20 transition">
                             <i class="fas fa-coffee mr-2"></i>Istirahat 5m
                         </button>
-                        <button onclick="setPomodoroTime(15)"
+                        <button onclick="app.pomodoro.setTime(15)"
                             class="glass-morphism px-6 py-3 rounded-xl text-white hover:bg-white/20 transition">
                             <i class="fas fa-couch mr-2"></i>Istirahat 15m
                         </button>
@@ -680,7 +857,7 @@
             <div id="habits-section" class="tab-content flex-1 flex flex-col hidden">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-6 gap-2 md:gap-3">
                     <h2 class="text-xl md:text-3xl font-bold text-white">Habit Tracker</h2>
-                    <button onclick="addHabit()"
+                    <button onclick="app.habits.addFromInput()"
                         class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
                         <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Habit
                     </button>
@@ -689,7 +866,7 @@
                 <div class="mb-3 md:mb-4">
                     <input type="text" id="new-habit-input" placeholder="Nama habit baru..."
                         class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
-                        onkeypress="if(event.key === 'Enter') addHabit()">
+                        onkeypress="if(event.key === 'Enter') app.habits.addFromInput()">
                 </div>
 
                 <div id="habits-container"
@@ -704,12 +881,12 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
                     <h2 class="text-xl md:text-3xl font-bold text-white">Kalender</h2>
                     <div class="flex gap-2">
-                        <button onclick="previousMonth()"
+                        <button onclick="app.calendar.previousMonth()"
                             class="neumorphic px-3 md:px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-chevron-left"></i>
                         </button>
                         <span id="current-month" class="px-3 md:px-4 py-2 text-white font-semibold text-sm md:text-base"></span>
-                        <button onclick="nextMonth()"
+                        <button onclick="app.calendar.nextMonth()"
                             class="neumorphic px-3 md:px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-chevron-right"></i>
                         </button>
@@ -738,18 +915,18 @@
                     <h2 class="text-xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">Bagaimana Perasaan Anda Hari Ini?</h2>
 
                     <div class="flex gap-3 md:gap-6 mb-6 md:mb-8">
-                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('very-sad')" data-mood="very-sad">😢</span>
-                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('sad')" data-mood="sad">😔</span>
-                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('neutral')" data-mood="neutral">😐</span>
-                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('happy')" data-mood="happy">😊</span>
-                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('very-happy')" data-mood="very-happy">😄</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="app.moods.selectMood('very-sad')" data-mood="very-sad">😢</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="app.moods.selectMood('sad')" data-mood="sad">😔</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="app.moods.selectMood('neutral')" data-mood="neutral">😐</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="app.moods.selectMood('happy')" data-mood="happy">😊</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="app.moods.selectMood('very-happy')" data-mood="very-happy">😄</span>
                     </div>
 
                     <textarea id="mood-note" placeholder="Tulis catatan tentang perasaan Anda..."
                         class="w-full max-w-md px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none mb-4 text-sm md:text-base"
                         rows="4"></textarea>
 
-                    <button onclick="saveMood()"
+                    <button onclick="app.moods.saveMood(document.getElementById('mood-note').value)"
                         class="neumorphic px-6 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                         <i class="fas fa-save mr-2"></i>Simpan Mood
                     </button>
@@ -781,11 +958,11 @@
             <textarea id="note-content" placeholder="Isi catatan..." rows="8"
                 class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none custom-scrollbar text-sm md:text-base"></textarea>
             <div class="flex flex-col sm:flex-row justify-end gap-2 md:gap-3 mt-3 md:mt-4">
-                <button onclick="closeNoteModal()"
+                <button onclick="app.notes.closeModal()"
                     class="px-4 md:px-6 py-2 md:py-3 rounded-xl glass-morphism text-white hover:bg-white/20 transition text-sm md:text-base">
                     Batal
                 </button>
-                <button onclick="saveNote()"
+                <button onclick="app.notes.saveFromModal()"
                     class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                     <i class="fas fa-save mr-2"></i>Simpan
                 </button>
@@ -793,1076 +970,7 @@
         </div>
     </div>
 
-    <script>
-        // Data storage
-        let notes = JSON.parse(localStorage.getItem('notes')) || [];
-        let todos = JSON.parse(localStorage.getItem('todos')) || [];
-        let habits = JSON.parse(localStorage.getItem('habits')) || [];
-        let moods = JSON.parse(localStorage.getItem('moods')) || [];
-        let pomodoroStats = JSON.parse(localStorage.getItem('pomodoroStats')) || {
-            sessions: 0,
-            totalTime: 0
-        };
-        let quickNotes = JSON.parse(localStorage.getItem('quickNotes')) || [];
-        let currentNoteId = null;
-        let currentMood = null;
-        let pomodoroInterval = null;
-        let pomodoroTime = 25 * 60;
-        let isPomodoroRunning = false;
-        let currentMonth = new Date();
-        let isDarkMode = false;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderNotes();
-            renderTodos();
-            renderHabits();
-            renderCalendar();
-            renderMoodChart();
-            updateStats();
-            updatePomodoroStats();
-            loadQuickNotes();
-            checkReminders();
-            setInterval(checkReminders, 60000); // Check reminders every minute
-
-            // Load theme preference
-            isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-                updateThemeIcon();
-            }
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey || e.metaKey) {
-                    switch (e.key) {
-                        case 'n':
-                            e.preventDefault();
-                            addNote();
-                            break;
-                        case 't':
-                            e.preventDefault();
-                            addTodo();
-                            break;
-                        case 'f':
-                            e.preventDefault();
-                            toggleFocusMode();
-                            break;
-                        case 'q':
-                            e.preventDefault();
-                            addQuickNote();
-                            break;
-                        case 'e':
-                            e.preventDefault();
-                            exportData();
-                            break;
-                        case 'i':
-                            e.preventDefault();
-                            importData();
-                            break;
-                    }
-                }
-                
-                // ESC to close mobile menu
-                if (e.key === 'Escape') {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar.classList.contains('mobile-open')) {
-                        toggleMobileMenu();
-                    }
-                }
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 1024) {
-                    // Reset mobile menu state on desktop
-                    const sidebar = document.getElementById('sidebar');
-                    const backdrop = document.getElementById('mobile-backdrop');
-                    const hamburger = document.getElementById('mobile-menu-toggle');
-                    
-                    sidebar.classList.remove('mobile-open');
-                    backdrop.classList.remove('active');
-                    document.body.style.overflow = '';
-                    hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-            });
-        });
-
-        // Theme toggle
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', isDarkMode);
-            updateThemeIcon();
-            showNotification(isDarkMode ? 'Mode gelap diaktifkan' : 'Mode terang diaktifkan', 'info');
-        }
-
-        function updateThemeIcon() {
-            const icon = document.getElementById('theme-icon');
-            const text = document.getElementById('theme-text');
-            if (isDarkMode) {
-                icon.className = 'fas fa-sun';
-                text.textContent = 'Mode Terang';
-            } else {
-                icon.className = 'fas fa-moon';
-                text.textContent = 'Mode Gelap';
-            }
-        }
-
-        // Focus mode
-        function toggleFocusMode() {
-            const focusMode = document.getElementById('focus-mode');
-            focusMode.classList.toggle('active');
-            if (focusMode.classList.contains('active')) {
-                showNotification('Mode fokus diaktifkan', 'success');
-            }
-        }
-
-        // Quick notes
-        function addQuickNote() {
-            const quickNote = {
-                id: Date.now(),
-                content: '',
-                x: Math.random() * (window.innerWidth - 250),
-                y: Math.random() * (window.innerHeight - 250),
-                color: `hsl(${Math.random() * 360}, 70%, 60%)`
-            };
-            quickNotes.push(quickNote);
-            localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
-            renderQuickNote(quickNote);
-            showNotification('Quick note ditambahkan', 'success');
-        }
-
-        function renderQuickNote(note) {
-            const container = document.getElementById('quick-notes-container');
-            const noteElement = document.createElement('div');
-            noteElement.className = 'quick-note glass-morphism rounded-xl';
-            noteElement.id = `quick-note-${note.id}`;
-            noteElement.style.left = note.x + 'px';
-            noteElement.style.top = note.y + 'px';
-            noteElement.style.background = note.color;
-            noteElement.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <button onclick="removeQuickNote(${note.id})" class="text-white/80 hover:text-white text-sm">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <button onclick="bringToFront(${note.id})" class="text-white/80 hover:text-white text-sm">
-                        <i class="fas fa-layer-group"></i>
-                    </button>
-                </div>
-                <textarea placeholder="Quick note..." 
-                          class="w-full h-32 bg-transparent text-white placeholder-white/60 outline-none resize-none text-sm"
-                          onblur="saveQuickNoteContent(${note.id}, this.value)">${note.content}</textarea>
-            `;
-            container.appendChild(noteElement);
-            makeDraggable(noteElement);
-        }
-
-        function loadQuickNotes() {
-            quickNotes.forEach(note => renderQuickNote(note));
-        }
-
-        function saveQuickNoteContent(id, content) {
-            const note = quickNotes.find(n => n.id === id);
-            if (note) {
-                note.content = content;
-                localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
-            }
-        }
-
-        function removeQuickNote(id) {
-            quickNotes = quickNotes.filter(n => n.id !== id);
-            localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
-            const element = document.getElementById(`quick-note-${id}`);
-            if (element) {
-                element.remove();
-            }
-            showNotification('Quick note dihapus', 'info');
-        }
-
-        function bringToFront(id) {
-            const element = document.getElementById(`quick-note-${id}`);
-            if (element) {
-                // Reset all quick notes z-index
-                document.querySelectorAll('.quick-note').forEach(note => {
-                    note.style.zIndex = '1000';
-                });
-                // Bring selected note to front
-                element.style.zIndex = '1001';
-            }
-        }
-
-        function makeDraggable(element) {
-            let pos1 = 0,
-                pos2 = 0,
-                pos3 = 0,
-                pos4 = 0;
-            let isDragging = false;
-
-            element.addEventListener('mousedown', dragMouseDown);
-
-            function dragMouseDown(e) {
-                // Only start dragging if not clicking on textarea or buttons
-                if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON' || e.target.tagName === 'I') {
-                    return;
-                }
-
-                e = e || window.event;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                isDragging = true;
-                element.classList.add('dragging');
-
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-
-                // Bring to front while dragging
-                bringToFront(parseInt(element.id.split('-')[2]));
-            }
-
-            function elementDrag(e) {
-                if (!isDragging) return;
-
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-
-                let newTop = element.offsetTop - pos2;
-                let newLeft = element.offsetLeft - pos1;
-
-                // Keep within viewport bounds
-                newTop = Math.max(0, Math.min(newTop, window.innerHeight - element.offsetHeight));
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - element.offsetWidth));
-
-                element.style.top = newTop + "px";
-                element.style.left = newLeft + "px";
-
-                // Save position
-                const noteId = parseInt(element.id.split('-')[2]);
-                const note = quickNotes.find(n => n.id === noteId);
-                if (note) {
-                    note.x = newLeft;
-                    note.y = newTop;
-                    localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
-                }
-            }
-
-            function closeDragElement() {
-                isDragging = false;
-                element.classList.remove('dragging');
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-        }
-
-        // Export/Import data
-        function exportData() {
-            const data = {
-                notes,
-                todos,
-                habits,
-                moods,
-                pomodoroStats,
-                quickNotes,
-                exportDate: new Date().toISOString()
-            };
-
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-            const exportFileDefaultName = `personal-hub-backup-${new Date().toISOString().split('T')[0]}.json`;
-
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-
-            showNotification('Data berhasil diekspor', 'success');
-        }
-
-        function importData() {
-            document.getElementById('import-file').click();
-        }
-
-        function handleImport(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-
-                        if (data.notes) notes = data.notes;
-                        if (data.todos) todos = data.todos;
-                        if (data.habits) habits = data.habits;
-                        if (data.moods) moods = data.moods;
-                        if (data.pomodoroStats) pomodoroStats = data.pomodoroStats;
-                        if (data.quickNotes) quickNotes = data.quickNotes;
-
-                        localStorage.setItem('notes', JSON.stringify(notes));
-                        localStorage.setItem('todos', JSON.stringify(todos));
-                        localStorage.setItem('habits', JSON.stringify(habits));
-                        localStorage.setItem('moods', JSON.stringify(moods));
-                        localStorage.setItem('pomodoroStats', JSON.stringify(pomodoroStats));
-                        localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
-
-                        renderNotes();
-                        renderTodos();
-                        renderHabits();
-                        renderCalendar();
-                        renderMoodChart();
-                        updateStats();
-                        updatePomodoroStats();
-
-                        // Reload quick notes
-                        document.getElementById('quick-notes-container').innerHTML = '';
-                        loadQuickNotes();
-
-                        showNotification('Data berhasil diimpor', 'success');
-                    } catch (error) {
-                        showNotification('Gagal mengimpor data', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        // Notifications
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            const notification = document.createElement('div');
-            notification.className = `notification-toast glass-morphism rounded-xl p-4 mb-2 text-white`;
-
-            const bgColor = type === 'success' ? 'bg-green-500/30' :
-                type === 'error' ? 'bg-red-500/30' :
-                'bg-blue-500/30';
-
-            notification.style.background = bgColor;
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 
-                                   type === 'error' ? 'fa-exclamation-circle' : 
-                                   'fa-info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            container.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.5s ease';
-                setTimeout(() => notification.remove(), 500);
-            }, 3000);
-        }
-
-        // Reminders
-        function checkReminders() {
-            const now = new Date();
-            todos.forEach(todo => {
-                if (!todo.completed && todo.reminder) {
-                    const reminderTime = new Date(todo.reminder);
-                    if (reminderTime <= now && reminderTime > new Date(now.getTime() - 60000)) {
-                        showNotification(`Reminder: ${todo.text}`, 'info');
-                        if (Notification.permission === 'granted') {
-                            new Notification('Task Reminder', {
-                                body: todo.text,
-                                icon: 'https://cdn-icons-png.flaticon.com/512/2920/2920277.png'
-                            });
-                        }
-                    }
-                }
-            });
-        }
-
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('mobile-backdrop');
-            const hamburger = document.getElementById('mobile-menu-toggle');
-            
-            // Toggle class untuk show/hide sidebar
-            sidebar.classList.toggle('mobile-open');
-            backdrop.classList.toggle('active');
-            
-            // Toggle body scroll
-            if (sidebar.classList.contains('mobile-open')) {
-                document.body.style.overflow = 'hidden';
-                hamburger.innerHTML = '<i class="fas fa-times"></i>';
-            } else {
-                document.body.style.overflow = '';
-                hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        }
-
-        // Tab switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(section => {
-                section.classList.add('hidden');
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('tab-active');
-            });
-
-            document.getElementById(`${tab}-section`).classList.remove('hidden');
-            document.getElementById(`${tab}-tab`).classList.add('tab-active');
-            
-            // Close mobile menu after selecting a tab
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth < 1024 && sidebar.classList.contains('mobile-open')) {
-                toggleMobileMenu();
-            }
-        }
-
-        // Notes functions
-        function addNote() {
-            currentNoteId = null;
-            document.getElementById('note-title').value = '';
-            document.getElementById('note-content').value = '';
-            document.getElementById('note-category').value = 'personal';
-            document.getElementById('note-modal').style.display = 'flex';
-        }
-
-        function editNote(id) {
-            const note = notes.find(n => n.id === id);
-            if (note) {
-                currentNoteId = id;
-                document.getElementById('note-title').value = note.title;
-                document.getElementById('note-content').value = note.content;
-                document.getElementById('note-category').value = note.category || 'personal';
-                document.getElementById('note-modal').style.display = 'flex';
-            }
-        }
-
-        function saveNote() {
-            const title = document.getElementById('note-title').value;
-            const content = document.getElementById('note-content').value;
-            const category = document.getElementById('note-category').value;
-
-            if (!title.trim()) {
-                showNotification('Judul catatan tidak boleh kosong!', 'error');
-                return;
-            }
-
-            if (currentNoteId) {
-                const noteIndex = notes.findIndex(n => n.id === currentNoteId);
-                if (noteIndex !== -1) {
-                    notes[noteIndex].title = title;
-                    notes[noteIndex].content = content;
-                    notes[noteIndex].category = category;
-                    notes[noteIndex].updatedAt = new Date().toISOString();
-                }
-            } else {
-                const newNote = {
-                    id: Date.now(),
-                    title,
-                    content,
-                    category,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                notes.unshift(newNote);
-            }
-
-            localStorage.setItem('notes', JSON.stringify(notes));
-            renderNotes();
-            updateStats();
-            closeNoteModal();
-            showNotification('Catatan berhasil disimpan', 'success');
-        }
-
-        function deleteNote(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus catatan ini?')) {
-                notes = notes.filter(n => n.id !== id);
-                localStorage.setItem('notes', JSON.stringify(notes));
-                renderNotes();
-                updateStats();
-                showNotification('Catatan berhasil dihapus', 'info');
-            }
-        }
-
-        function closeNoteModal() {
-            document.getElementById('note-modal').style.display = 'none';
-        }
-
-        function renderNotes() {
-            const container = document.getElementById('notes-container');
-            const categoryFilter = document.getElementById('category-filter').value;
-
-            let filteredNotes = notes;
-            if (categoryFilter) {
-                filteredNotes = notes.filter(n => n.category === categoryFilter);
-            }
-
-            if (filteredNotes.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <i class="fas fa-sticky-note text-6xl text-white/30 mb-4"></i>
-                        <p class="text-white/60">Belum ada catatan. Mulai dengan menambah catatan baru!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filteredNotes.map(note => `
-                <div class="note-card glass-morphism rounded-xl p-4 text-white">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold text-lg flex-1 mr-2">${note.title}</h3>
-                        <div class="flex gap-2">
-                            <button onclick="editNote(${note.id})" class="hover:scale-110 transition-transform">
-                                <i class="fas fa-edit text-sm"></i>
-                            </button>
-                            <button onclick="deleteNote(${note.id})" class="hover:scale-110 transition-transform">
-                                <i class="fas fa-trash text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <p class="text-white/80 text-sm mb-3 line-clamp-3">${note.content || 'Tidak ada konten'}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs px-2 py-1 rounded ${getCategoryClass(note.category)}">${getCategoryLabel(note.category)}</span>
-                        <div class="text-xs text-white/60">
-                            <i class="far fa-clock mr-1"></i>
-                            ${new Date(note.updatedAt).toLocaleDateString('id-ID')}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getCategoryClass(category) {
-            const classes = {
-                personal: 'bg-blue-500/30 text-blue-200',
-                work: 'bg-purple-500/30 text-purple-200',
-                ideas: 'bg-yellow-500/30 text-yellow-200',
-                important: 'bg-red-500/30 text-red-200'
-            };
-            return classes[category] || 'bg-gray-500/30 text-gray-200';
-        }
-
-        function getCategoryLabel(category) {
-            const labels = {
-                personal: 'Personal',
-                work: 'Pekerjaan',
-                ideas: 'Ide',
-                important: 'Penting'
-            };
-            return labels[category] || 'Lainnya';
-        }
-
-        function filterByCategory() {
-            renderNotes();
-        }
-
-        function searchNotes() {
-            const searchTerm = document.getElementById('search-notes').value.toLowerCase();
-            const noteCards = document.querySelectorAll('.note-card');
-
-            noteCards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const content = card.querySelector('p').textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || content.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Todo functions
-        function addTodo() {
-            const input = document.getElementById('new-todo-input');
-            const priority = document.getElementById('todo-priority').value;
-            const reminder = document.getElementById('todo-reminder').value;
-            const text = input.value.trim();
-
-            if (!text) {
-                showNotification('Task tidak boleh kosong!', 'error');
-                return;
-            }
-
-            const newTodo = {
-                id: Date.now(),
-                text,
-                priority,
-                reminder,
-                completed: false,
-                createdAt: new Date().toISOString()
-            };
-
-            todos.unshift(newTodo);
-            localStorage.setItem('todos', JSON.stringify(todos));
-            renderTodos();
-            updateStats();
-            input.value = '';
-            document.getElementById('todo-reminder').value = '';
-            showNotification('Task berhasil ditambahkan', 'success');
-        }
-
-        function toggleTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (todo) {
-                todo.completed = !todo.completed;
-                localStorage.setItem('todos', JSON.stringify(todos));
-                renderTodos();
-                updateStats();
-            }
-        }
-
-        function deleteTodo(id) {
-            todos = todos.filter(t => t.id !== id);
-            localStorage.setItem('todos', JSON.stringify(todos));
-            renderTodos();
-            updateStats();
-            showNotification('Task berhasil dihapus', 'info');
-        }
-
-        function renderTodos() {
-            const activeContainer = document.getElementById('active-todos');
-            const completedContainer = document.getElementById('completed-todos');
-
-            const activeTodos = todos.filter(t => !t.completed);
-            const completedTodos = todos.filter(t => t.completed);
-
-            if (activeTodos.length === 0) {
-                activeContainer.innerHTML = '<p class="text-white/60 text-sm">Tidak ada task aktif</p>';
-            } else {
-                activeContainer.innerHTML = activeTodos.map(todo => `
-                    <div class="todo-item glass-morphism rounded-xl p-4 flex items-center gap-3">
-                        <input type="checkbox" ${todo.completed ? 'checked' : ''} 
-                               onchange="toggleTodo(${todo.id})"
-                               class="w-5 h-5 rounded cursor-pointer">
-                        <div class="flex-1">
-                            <span class="text-white ${todo.completed ? 'line-through opacity-60' : ''}">${todo.text}</span>
-                            <span class="ml-2 px-2 py-1 rounded text-xs ${getPriorityClass(todo.priority)}">${getPriorityLabel(todo.priority)}</span>
-                            ${todo.reminder ? `<span class="ml-2 text-xs text-white/60"><i class="far fa-bell"></i> ${new Date(todo.reminder).toLocaleString('id-ID', {hour: '2-digit', minute: '2-digit'})}</span>` : ''}
-                        </div>
-                        <button onclick="deleteTodo(${todo.id})" class="text-white/60 hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            if (completedTodos.length === 0) {
-                completedContainer.innerHTML = '<p class="text-white/60 text-sm">Belum ada task yang selesai</p>';
-            } else {
-                completedContainer.innerHTML = completedTodos.map(todo => `
-                    <div class="todo-item glass-morphism rounded-xl p-4 flex items-center gap-3 opacity-60">
-                        <input type="checkbox" checked 
-                               onchange="toggleTodo(${todo.id})"
-                               class="w-5 h-5 rounded cursor-pointer">
-                        <div class="flex-1">
-                            <span class="text-white line-through">${todo.text}</span>
-                        </div>
-                        <button onclick="deleteTodo(${todo.id})" class="text-white/60 hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function getPriorityClass(priority) {
-            switch (priority) {
-                case 'high':
-                    return 'bg-red-500/30 text-red-200';
-                case 'medium':
-                    return 'bg-yellow-500/30 text-yellow-200';
-                case 'low':
-                    return 'bg-green-500/30 text-green-200';
-                default:
-                    return 'bg-gray-500/30 text-gray-200';
-            }
-        }
-
-        function getPriorityLabel(priority) {
-            switch (priority) {
-                case 'high':
-                    return 'Tinggi';
-                case 'medium':
-                    return 'Sedang';
-                case 'low':
-                    return 'Rendah';
-                default:
-                    return 'Normal';
-            }
-        }
-
-        // Habit Tracker functions
-        function addHabit() {
-            const input = document.getElementById('new-habit-input');
-            const text = input.value.trim();
-
-            if (!text) {
-                showNotification('Nama habit tidak boleh kosong!', 'error');
-                return;
-            }
-
-            const newHabit = {
-                id: Date.now(),
-                name: text,
-                streak: 0,
-                completedDates: [],
-                createdAt: new Date().toISOString()
-            };
-
-            habits.push(newHabit);
-            localStorage.setItem('habits', JSON.stringify(habits));
-            renderHabits();
-            input.value = '';
-            showNotification('Habit berhasil ditambahkan', 'success');
-        }
-
-        function toggleHabit(id) {
-            const habit = habits.find(h => h.id === id);
-            const today = new Date().toDateString();
-
-            if (habit) {
-                if (habit.completedDates.includes(today)) {
-                    habit.completedDates = habit.completedDates.filter(date => date !== today);
-                    habit.streak = Math.max(0, habit.streak - 1);
-                } else {
-                    habit.completedDates.push(today);
-                    habit.streak++;
-                }
-                localStorage.setItem('habits', JSON.stringify(habits));
-                renderHabits();
-            }
-        }
-
-        function deleteHabit(id) {
-            habits = habits.filter(h => h.id !== id);
-            localStorage.setItem('habits', JSON.stringify(habits));
-            renderHabits();
-            showNotification('Habit berhasil dihapus', 'info');
-        }
-
-        function renderHabits() {
-            const container = document.getElementById('habits-container');
-
-            if (habits.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <i class="fas fa-chart-line text-6xl text-white/30 mb-4"></i>
-                        <p class="text-white/60">Belum ada habit. Mulai dengan menambah habit baru!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const today = new Date().toDateString();
-
-            container.innerHTML = habits.map(habit => {
-                const isCompletedToday = habit.completedDates.includes(today);
-                const percentage = Math.min(100, (habit.streak / 30) * 100);
-
-                return `
-                    <div class="habit-ring glass-morphism rounded-xl p-6 text-white">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="font-semibold text-lg">${habit.name}</h3>
-                            <button onclick="deleteHabit(${habit.id})" class="text-white/60 hover:text-white">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="text-center mb-4">
-                            <div class="text-4xl font-bold mb-2">${habit.streak}</div>
-                            <div class="text-sm opacity-80">Hari Beruntun</div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="w-full bg-white/20 rounded-full h-3">
-                                <div class="bg-gradient-to-r from-blue-400 to-purple-400 h-3 rounded-full transition-all duration-500" 
-                                     style="width: ${percentage}%"></div>
-                            </div>
-                        </div>
-                        <button onclick="toggleHabit(${habit.id})" 
-                                class="w-full py-2 rounded-xl ${isCompletedToday ? 'bg-green-500/30' : 'glass-morphism'} hover:scale-105 transition-transform">
-                            ${isCompletedToday ? '<i class="fas fa-check mr-2"></i>Selesai Hari Ini' : '<i class="far fa-circle mr-2"></i>Mark Selesai'}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Calendar functions
-        function renderCalendar() {
-            const year = currentMonth.getFullYear();
-            const month = currentMonth.getMonth();
-
-            document.getElementById('current-month').textContent =
-                new Date(year, month).toLocaleDateString('id-ID', {
-                    month: 'long',
-                    year: 'numeric'
-                });
-
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            const container = document.getElementById('calendar-days');
-            container.innerHTML = '';
-
-            // Empty cells for days before month starts
-            for (let i = 0; i < firstDay; i++) {
-                container.innerHTML += '<div></div>';
-            }
-
-            // Days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, month, day);
-                const dateStr = date.toDateString();
-                const dayNotes = notes.filter(n => new Date(n.createdAt).toDateString() === dateStr);
-                const dayTodos = todos.filter(t => new Date(t.createdAt).toDateString() === dateStr);
-                const hasEvents = dayNotes.length > 0 || dayTodos.length > 0;
-
-                container.innerHTML += `
-                    <div class="calendar-day glass-morphism rounded-lg p-2 text-center text-white cursor-pointer relative ${hasEvents ? 'ring-2 ring-white/50' : ''}"
-                         onclick="showDayEvents('${dateStr}')">
-                        <div class="font-semibold">${day}</div>
-                        ${dayNotes.length > 0 ? `<div class="text-xs text-blue-300">${dayNotes} notes</div>` : ''}
-                        ${dayTodos.length > 0 ? `<div class="text-xs text-green-300">${dayTodos} tasks</div>` : ''}
-                    </div>
-                `;
-            }
-        }
-
-        function previousMonth() {
-            currentMonth.setMonth(currentMonth.getMonth() - 1);
-            renderCalendar();
-        }
-
-        function nextMonth() {
-            currentMonth.setMonth(currentMonth.getMonth() + 1);
-            renderCalendar();
-        }
-
-        function showDayEvents(dateStr) {
-            const dayNotes = notes.filter(n => new Date(n.createdAt).toDateString() === dateStr);
-            const dayTodos = todos.filter(t => new Date(t.createdAt).toDateString() === dateStr);
-
-            let message = `Events for ${new Date(dateStr).toLocaleDateString('id-ID')}:\n\n`;
-
-            if (dayNotes.length > 0) {
-                message += 'Notes:\n';
-                dayNotes.forEach(note => {
-                    message += `- ${note.title}\n`;
-                });
-            }
-
-            if (dayTodos.length > 0) {
-                message += '\nTasks:\n';
-                dayTodos.forEach(todo => {
-                    message += `- ${todo.text}\n`;
-                });
-            }
-
-            if (dayNotes.length === 0 && dayTodos.length === 0) {
-                message = 'No events for this day';
-            }
-
-            showNotification(message, 'info');
-        }
-
-        // Mood Tracker functions
-        function setMood(mood) {
-            currentMood = mood;
-            document.querySelectorAll('.mood-emoji').forEach(emoji => {
-                emoji.classList.remove('selected');
-            });
-            document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
-        }
-
-        function saveMood() {
-            if (!currentMood) {
-                showNotification('Pilih mood terlebih dahulu!', 'error');
-                return;
-            }
-
-            const note = document.getElementById('mood-note').value;
-            const today = new Date().toDateString();
-
-            const existingMoodIndex = moods.findIndex(m => m.date === today);
-            const moodData = {
-                date: today,
-                mood: currentMood,
-                note: note,
-                timestamp: new Date().toISOString()
-            };
-
-            if (existingMoodIndex !== -1) {
-                moods[existingMoodIndex] = moodData;
-            } else {
-                moods.push(moodData);
-            }
-
-            localStorage.setItem('moods', JSON.stringify(moods));
-            renderMoodChart();
-            showNotification('Mood berhasil disimpan', 'success');
-
-            // Reset form
-            currentMood = null;
-            document.getElementById('mood-note').value = '';
-            document.querySelectorAll('.mood-emoji').forEach(emoji => {
-                emoji.classList.remove('selected');
-            });
-        }
-
-        function renderMoodChart() {
-            const container = document.getElementById('mood-chart');
-            const last7Days = [];
-            const today = new Date();
-
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                last7Days.push(date.toDateString());
-            }
-
-            const moodValues = {
-                'very-sad': 1,
-                'sad': 2,
-                'neutral': 3,
-                'happy': 4,
-                'very-happy': 5
-            };
-
-            container.innerHTML = last7Days.map(dateStr => {
-                const mood = moods.find(m => m.date === dateStr);
-                const value = mood ? moodValues[mood.mood] : 0;
-                const height = value * 20;
-                const emoji = mood ? getMoodEmoji(mood.mood) : '❓';
-
-                return `
-                    <div class="flex flex-col items-center">
-                        <div class="w-8 bg-white/20 rounded-t" style="height: ${height}px"></div>
-                        <div class="text-2xl mt-1">${emoji}</div>
-                        <div class="text-xs text-white/60 mt-1">${new Date(dateStr).getDate()}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function getMoodEmoji(mood) {
-            const emojis = {
-                'very-sad': '😢',
-                'sad': '😔',
-                'neutral': '😐',
-                'happy': '😊',
-                'very-happy': '😄'
-            };
-            return emojis[mood] || '❓';
-        }
-
-        // Pomodoro functions
-        function setPomodoroTime(minutes) {
-            pomodoroTime = minutes * 60;
-            updatePomodoroDisplay();
-            if (isPomodoroRunning) {
-                pausePomodoro();
-            }
-        }
-
-        function startPomodoro() {
-            if (!isPomodoroRunning) {
-                isPomodoroRunning = true;
-                document.getElementById('pomodoro-start').classList.add('hidden');
-                document.getElementById('pomodoro-pause').classList.remove('hidden');
-                document.getElementById('pomodoro-status').textContent = 'Fokus!';
-
-                pomodoroInterval = setInterval(() => {
-                    if (pomodoroTime > 0) {
-                        pomodoroTime--;
-                        updatePomodoroDisplay();
-                    } else {
-                        completePomodoro();
-                    }
-                }, 1000);
-            }
-        }
-
-        function pausePomodoro() {
-            if (isPomodoroRunning) {
-                isPomodoroRunning = false;
-                clearInterval(pomodoroInterval);
-                document.getElementById('pomodoro-start').classList.remove('hidden');
-                document.getElementById('pomodoro-pause').classList.add('hidden');
-                document.getElementById('pomodoro-status').textContent = 'Dijeda';
-            }
-        }
-
-        function resetPomodoro() {
-            pausePomodoro();
-            pomodoroTime = 25 * 60;
-            updatePomodoroDisplay();
-            document.getElementById('pomodoro-status').textContent = 'Siap Memulai';
-        }
-
-        function completePomodoro() {
-            pausePomodoro();
-            pomodoroStats.sessions++;
-            pomodoroStats.totalTime += 25;
-            localStorage.setItem('pomodoroStats', JSON.stringify(pomodoroStats));
-            updatePomodoroStats();
-
-            document.getElementById('pomodoro-status').textContent = 'Selesai! Istirahat sejenak';
-
-            if (Notification.permission === 'granted') {
-                new Notification('Pomodoro Selesai!', {
-                    body: 'Waktu istirahat 5 menit',
-                    icon: 'https://cdn-icons-png.flaticon.com/512/2920/2920277.png'
-                });
-            }
-
-            showNotification('Pomodoro selesai! Waktu istirahat 5 menit', 'success');
-        }
-
-        function updatePomodoroDisplay() {
-            const minutes = Math.floor(pomodoroTime / 60);
-            const seconds = pomodoroTime % 60;
-            document.getElementById('pomodoro-display').textContent =
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function updatePomodoroStats() {
-            document.getElementById('pomodoro-sessions').textContent = pomodoroStats.sessions;
-            document.getElementById('pomodoro-time').textContent = `${pomodoroStats.totalTime}m`;
-        }
-
-        // Update statistics
-        function updateStats() {
-            document.getElementById('total-notes').textContent = notes.length;
-            const completedTasks = todos.filter(t => t.completed).length;
-            document.getElementById('completed-tasks').textContent = completedTasks;
-
-            // Calculate streak
-            let streak = 0;
-            const today = new Date();
-            for (let i = 0; i < 365; i++) {
-                const checkDate = new Date(today);
-                checkDate.setDate(checkDate.getDate() - i);
-                const dateStr = checkDate.toDateString();
-
-                const hasCompletedHabits = habits.some(h => h.completedDates.includes(dateStr));
-                const hasMood = moods.some(m => m.date === dateStr);
-
-                if (hasCompletedHabits || hasMood) {
-                    streak++;
-                } else if (i > 0) {
-                    break;
-                }
-            }
-
-            document.getElementById('streak-days').textContent = streak;
-        }
-
-        // Request notification permission
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
-    </script>
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
