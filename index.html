@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Personal Hub Pro - Catatan & Produktivitas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,8 +19,13 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height */
             perspective: 1000px;
             transition: background 0.5s ease;
+            overflow-x: hidden;
+            /* Safe area insets for notch devices */
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         body.dark-mode {
@@ -54,6 +61,12 @@
         .floating {
             animation: float 6s ease-in-out infinite;
         }
+        
+        @media (max-width: 1023px) {
+            .floating {
+                animation: none;
+            }
+        }
 
         @keyframes float {
 
@@ -75,6 +88,12 @@
         .rotate-3d:hover {
             transform: rotateY(10deg) rotateX(-5deg);
         }
+        
+        @media (max-width: 767px) {
+            .rotate-3d:hover {
+                transform: none;
+            }
+        }
 
         .tab-active {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
@@ -88,11 +107,23 @@
         .note-card {
             transform-style: preserve-3d;
             transition: all 0.3s ease;
+            min-height: 150px;
         }
 
         .note-card:hover {
             transform: translateZ(20px) rotateX(-2deg);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 767px) {
+            .note-card {
+                min-height: 120px;
+            }
+            
+            .note-card:hover {
+                transform: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
         }
 
         .todo-item {
@@ -136,7 +167,7 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
@@ -151,6 +182,12 @@
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 767px) {
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 4px;
+            }
         }
 
         .habit-ring {
@@ -173,29 +210,46 @@
         }
 
         .mood-emoji {
-            font-size: 2rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-block;
         }
 
         .mood-emoji:hover {
-            transform: scale(1.3) rotate(10deg);
+            transform: scale(1.2) rotate(10deg);
         }
 
         .mood-emoji.selected {
-            transform: scale(1.5);
+            transform: scale(1.3);
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+        
+        @media (min-width: 768px) {
+            .mood-emoji:hover {
+                transform: scale(1.3) rotate(10deg);
+            }
+            
+            .mood-emoji.selected {
+                transform: scale(1.5);
+            }
         }
 
         .quick-note {
             position: fixed;
-            padding: 15px;
-            min-width: 200px;
-            min-height: 200px;
+            padding: 12px;
+            min-width: 180px;
+            min-height: 180px;
             cursor: move;
             transition: box-shadow 0.3s ease, transform 0.1s ease;
             z-index: 1000;
+        }
+        
+        @media (min-width: 768px) {
+            .quick-note {
+                padding: 15px;
+                min-width: 200px;
+                min-height: 200px;
+            }
         }
 
         .quick-note:hover {
@@ -225,10 +279,19 @@
 
         .notification-toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
+            left: 10px;
             z-index: 1002;
             animation: slideIn 0.5s ease;
+        }
+        
+        @media (min-width: 640px) {
+            .notification-toast {
+                top: 20px;
+                right: 20px;
+                left: auto;
+            }
         }
 
         @keyframes slideIn {
@@ -280,17 +343,76 @@
         .modal-content {
             z-index: 1004;
         }
+        
+        /* Mobile menu backdrop */
+        .mobile-menu-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 35;
+            display: none;
+        }
+        
+        .mobile-menu-backdrop.active {
+            display: block;
+        }
+        
+        /* Mobile sidebar states */
+        @media (max-width: 1023px) {
+            .sidebar-mobile {
+                height: 100vh;
+                height: 100dvh; /* Dynamic viewport height for mobile browsers */
+                padding-top: max(1rem, env(safe-area-inset-top));
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+                /* Force hidden by default on mobile */
+                transform: translateX(-100%) !important;
+            }
+            
+            .sidebar-mobile.mobile-open {
+                transform: translateX(0) !important;
+            }
+        }
+        
+        /* Desktop sidebar - always visible */
+        @media (min-width: 1024px) {
+            .sidebar-mobile {
+                transform: translateX(0) !important;
+            }
+            
+            .mobile-menu-backdrop {
+                display: none !important;
+            }
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 767px) {
+            /* Prevent zoom on input focus on iOS */
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+            
+            /* Better touch targets */
+            button, a {
+                min-height: 44px;
+            }
+            
+            /* Smooth scrolling */
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
     </style>
 </head>
 
-<body class="overflow-hidden">
+<body>
     <!-- Focus Mode Overlay -->
     <div id="focus-mode" class="focus-mode">
-        <div class="text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">Mode Fokus Aktif</h2>
-            <p class="text-white/80 mb-8">Hilangkan semua gangguan dan fokus pada tugas Anda</p>
+        <div class="text-center px-4">
+            <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Mode Fokus Aktif</h2>
+            <p class="text-white/80 mb-8 text-sm md:text-base">Hilangkan semua gangguan dan fokus pada tugas Anda</p>
             <button onclick="toggleFocusMode()"
-                class="neumorphic px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
+                class="neumorphic px-6 md:px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
                 <i class="fas fa-times mr-2"></i>Keluar Mode Fokus
             </button>
         </div>
@@ -302,82 +424,97 @@
     <!-- Quick Notes Container -->
     <div id="quick-notes-container"></div>
 
-    <div class="flex h-screen p-4 gap-4">
+    <!-- Mobile Menu Toggle -->
+    <button id="mobile-menu-toggle" onclick="toggleMobileMenu()" 
+            class="lg:hidden fixed z-50 glass-morphism p-2.5 sm:p-3 rounded-xl text-white shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+            style="top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));">
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobile-backdrop" class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+
+    <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen p-0 sm:p-2 md:p-4 gap-0 md:gap-4">
         <!-- Sidebar -->
-        <div class="w-64 glass-morphism rounded-2xl p-6 floating">
-            <div class="text-white mb-8">
-                <h1 class="text-2xl font-bold mb-2 flex items-center gap-2">
-                    <i class="fas fa-cube"></i>
-                    Personal Hub Pro
-                </h1>
-                <p class="text-sm opacity-80">Catatan & Produktivitas</p>
+        <div id="sidebar" class="fixed lg:relative inset-0 lg:inset-auto w-[85vw] max-w-[320px] sm:w-80 lg:w-64 glass-morphism rounded-none lg:rounded-2xl p-4 md:p-6 floating z-40 transition-transform duration-300 overflow-y-auto sidebar-mobile">
+            <div class="flex justify-between items-start mb-6 md:mb-8">
+                <div class="text-white">
+                    <h1 class="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
+                        <i class="fas fa-cube"></i>
+                        Personal Hub Pro
+                    </h1>
+                    <p class="text-xs md:text-sm opacity-80">Catatan & Produktivitas</p>
+                </div>
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
 
             <!-- Theme Toggle -->
-            <div class="mb-6">
+            <div class="mb-4 md:mb-6">
                 <button onclick="toggleTheme()"
-                    class="w-full neumorphic px-4 py-3 rounded-xl text-white hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                    class="w-full neumorphic px-4 py-3 rounded-xl text-white hover:scale-105 transition-transform flex items-center justify-center gap-2 text-sm md:text-base min-h-[44px]">
                     <i id="theme-icon" class="fas fa-moon"></i>
                     <span id="theme-text">Mode Gelap</span>
                 </button>
             </div>
 
-            <nav class="space-y-2">
+            <nav class="space-y-2 mb-4">
                 <button onclick="switchTab('notes')" id="notes-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 tab-active flex items-center gap-3">
-                    <i class="fas fa-sticky-note"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 tab-active flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-sticky-note w-4"></i>
                     <span>Catatan</span>
                 </button>
                 <button onclick="switchTab('todos')" id="todos-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3">
-                    <i class="fas fa-tasks"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-tasks w-4"></i>
                     <span>To-Do List</span>
                 </button>
                 <button onclick="switchTab('pomodoro')" id="pomodoro-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3">
-                    <i class="fas fa-clock"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-clock w-4"></i>
                     <span>Pomodoro</span>
                 </button>
                 <button onclick="switchTab('habits')" id="habits-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3">
-                    <i class="fas fa-chart-line"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-chart-line w-4"></i>
                     <span>Habit Tracker</span>
                 </button>
                 <button onclick="switchTab('calendar')" id="calendar-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3">
-                    <i class="fas fa-calendar"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-calendar w-4"></i>
                     <span>Kalender</span>
                 </button>
                 <button onclick="switchTab('mood')" id="mood-tab"
-                    class="tab-btn w-full text-left px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3">
-                    <i class="fas fa-smile"></i>
+                    class="tab-btn w-full text-left px-3 md:px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-3 text-sm md:text-base min-h-[44px]">
+                    <i class="fas fa-smile w-4"></i>
                     <span>Mood Tracker</span>
                 </button>
             </nav>
 
             <!-- Quick Actions -->
-            <div class="mt-6 space-y-2">
+            <div class="mt-4 md:mt-6 space-y-2">
                 <button onclick="addQuickNote()"
-                    class="w-full glass-morphism px-4 py-2 rounded-xl text-white text-sm hover:bg-white/20 transition flex items-center justify-center gap-2">
+                    class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-sticky-note"></i>
                     Quick Note
                 </button>
                 <button onclick="toggleFocusMode()"
-                    class="w-full glass-morphism px-4 py-2 rounded-xl text-white text-sm hover:bg-white/20 transition flex items-center justify-center gap-2">
+                    class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-brain"></i>
                     Focus Mode
                 </button>
             </div>
 
             <!-- Data Management -->
-            <div class="mt-6 space-y-2">
+            <div class="mt-4 md:mt-6 space-y-2">
                 <button onclick="exportData()"
-                    class="w-full glass-morphism px-4 py-2 rounded-xl text-white text-sm hover:bg-white/20 transition flex items-center justify-center gap-2">
+                    class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-download"></i>
                     Export Data
                 </button>
                 <button onclick="importData()"
-                    class="w-full glass-morphism px-4 py-2 rounded-xl text-white text-sm hover:bg-white/20 transition flex items-center justify-center gap-2">
+                    class="w-full glass-morphism px-3 md:px-4 py-2.5 rounded-xl text-white text-xs md:text-sm hover:bg-white/20 transition flex items-center justify-center gap-2 min-h-[40px]">
                     <i class="fas fa-upload"></i>
                     Import Data
                 </button>
@@ -385,31 +522,33 @@
 
             <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleImport(event)">
 
-            <div class="mt-auto pt-8">
-                <div class="glass-morphism rounded-xl p-4 text-white">
-                    <div class="text-sm opacity-80 mb-1">Total Catatan</div>
-                    <div class="text-2xl font-bold" id="total-notes">0</div>
-                </div>
-                <div class="glass-morphism rounded-xl p-4 text-white mt-3">
-                    <div class="text-sm opacity-80 mb-1">Task Selesai</div>
-                    <div class="text-2xl font-bold" id="completed-tasks">0</div>
-                </div>
-                <div class="glass-morphism rounded-xl p-4 text-white mt-3">
-                    <div class="text-sm opacity-80 mb-1">Streak Hari</div>
-                    <div class="text-2xl font-bold" id="streak-days">0</div>
+            <div class="mt-auto pt-6 md:pt-8">
+                <div class="grid grid-cols-3 lg:grid-cols-1 gap-2 md:gap-3">
+                    <div class="glass-morphism rounded-lg md:rounded-xl p-2.5 md:p-4 text-white text-center lg:text-left">
+                        <div class="text-xs md:text-sm opacity-80 mb-0.5 md:mb-1">Total Catatan</div>
+                        <div class="text-base md:text-2xl font-bold" id="total-notes">0</div>
+                    </div>
+                    <div class="glass-morphism rounded-lg md:rounded-xl p-2.5 md:p-4 text-white text-center lg:text-left">
+                        <div class="text-xs md:text-sm opacity-80 mb-0.5 md:mb-1">Task Selesai</div>
+                        <div class="text-base md:text-2xl font-bold" id="completed-tasks">0</div>
+                    </div>
+                    <div class="glass-morphism rounded-lg md:rounded-xl p-2.5 md:p-4 text-white text-center lg:text-left">
+                        <div class="text-xs md:text-sm opacity-80 mb-0.5 md:mb-1">Streak Hari</div>
+                        <div class="text-base md:text-2xl font-bold" id="streak-days">0</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 glass-morphism rounded-2xl p-6 overflow-hidden">
+        <div class="flex-1 glass-morphism rounded-none sm:rounded-xl lg:rounded-2xl p-3 md:p-6 overflow-hidden flex flex-col min-h-screen lg:h-full">
             <!-- Notes Section -->
-            <div id="notes-section" class="tab-content h-full">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-white">Catatan Pribadi</h2>
-                    <div class="flex gap-2">
+            <div id="notes-section" class="tab-content flex-1 flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-6 gap-2 md:gap-3">
+                    <h2 class="text-xl md:text-3xl font-bold text-white">Catatan Pribadi</h2>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         <select id="category-filter" onchange="filterByCategory()"
-                            class="px-4 py-2 rounded-xl glass-morphism text-white outline-none">
+                            class="px-3 md:px-4 py-2 rounded-xl glass-morphism text-white outline-none text-sm md:text-base w-full sm:w-auto">
                             <option value="">Semua Kategori</option>
                             <option value="personal">Personal</option>
                             <option value="work">Pekerjaan</option>
@@ -417,59 +556,59 @@
                             <option value="important">Penting</option>
                         </select>
                         <button onclick="addNote()"
-                            class="neumorphic px-6 py-3 rounded-xl text-white hover:scale-105 transition-transform">
-                            <i class="fas fa-plus mr-2"></i>Tambah Catatan
+                            class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
+                            <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Catatan
                         </button>
                     </div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3 md:mb-4">
                     <input type="text" id="search-notes" placeholder="Cari catatan..."
-                        class="w-full px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30"
+                        class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
                         onkeyup="searchNotes()">
                 </div>
 
                 <div id="notes-container"
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto custom-scrollbar"
-                    style="max-height: calc(100% - 140px);">
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 overflow-y-auto custom-scrollbar flex-1"
+                    style="min-height: 0;">
                     <!-- Notes will be added here dynamically -->
                 </div>
             </div>
 
             <!-- Todos Section -->
-            <div id="todos-section" class="tab-content h-full hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-white">To-Do List</h2>
+            <div id="todos-section" class="tab-content flex-1 flex flex-col hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <h2 class="text-xl md:text-3xl font-bold text-white">To-Do List</h2>
                     <button onclick="addTodo()"
-                        class="neumorphic px-6 py-3 rounded-xl text-white hover:scale-105 transition-transform">
-                        <i class="fas fa-plus mr-2"></i>Tambah Task
+                        class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
+                        <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Task
                     </button>
                 </div>
 
-                <div class="mb-4">
-                    <div class="flex gap-2">
+                <div class="mb-3 md:mb-4">
+                    <div class="flex flex-col md:flex-row gap-2">
                         <input type="text" id="new-todo-input" placeholder="Tambah task baru..."
-                            class="flex-1 px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30"
+                            class="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
                             onkeypress="if(event.key === 'Enter') addTodo()">
-                        <select id="todo-priority" class="px-4 py-3 rounded-xl glass-morphism text-white outline-none">
+                        <select id="todo-priority" class="px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white outline-none text-sm md:text-base">
                             <option value="low">Rendah</option>
                             <option value="medium" selected>Sedang</option>
                             <option value="high">Tinggi</option>
                         </select>
                         <input type="datetime-local" id="todo-reminder"
-                            class="px-4 py-3 rounded-xl glass-morphism text-white outline-none">
+                            class="px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white outline-none text-sm md:text-base">
                     </div>
                 </div>
 
-                <div class="space-y-2 overflow-y-auto custom-scrollbar" style="max-height: calc(100% - 140px);">
+                <div class="space-y-2 overflow-y-auto custom-scrollbar flex-1" style="min-height: 0;">
                     <div class="mb-4">
-                        <h3 class="text-white font-semibold mb-2">Task Aktif</h3>
+                        <h3 class="text-white font-semibold mb-2 text-sm md:text-base">Task Aktif</h3>
                         <div id="active-todos" class="space-y-2">
                             <!-- Active todos will be added here -->
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-white font-semibold mb-2">Selesai</h3>
+                        <h3 class="text-white font-semibold mb-2 text-sm md:text-base">Selesai</h3>
                         <div id="completed-todos" class="space-y-2">
                             <!-- Completed todos will be added here -->
                         </div>
@@ -478,35 +617,35 @@
             </div>
 
             <!-- Pomodoro Section -->
-            <div id="pomodoro-section" class="tab-content h-full hidden">
-                <div class="flex flex-col items-center justify-center h-full">
-                    <h2 class="text-4xl font-bold text-white mb-8">Pomodoro Timer</h2>
+            <div id="pomodoro-section" class="tab-content flex-1 flex flex-col hidden">
+                <div class="flex flex-col items-center justify-center h-full py-4">
+                    <h2 class="text-2xl md:text-4xl font-bold text-white mb-6 md:mb-8">Pomodoro Timer</h2>
 
                     <div class="relative">
-                        <div class="pomodoro-circle w-64 h-64 rounded-full neumorphic flex items-center justify-center">
+                        <div class="pomodoro-circle w-48 h-48 md:w-64 md:h-64 rounded-full neumorphic flex items-center justify-center">
                             <div class="text-center">
-                                <div id="pomodoro-display" class="text-6xl font-bold text-white mb-2">25:00</div>
-                                <div id="pomodoro-status" class="text-white/80">Siap Memulai</div>
+                                <div id="pomodoro-display" class="text-4xl md:text-6xl font-bold text-white mb-2">25:00</div>
+                                <div id="pomodoro-status" class="text-white/80 text-sm md:text-base">Siap Memulai</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex gap-4 mt-8">
+                    <div class="flex gap-2 md:gap-4 mt-6 md:mt-8">
                         <button onclick="startPomodoro()" id="pomodoro-start"
-                            class="neumorphic px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
+                            class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-play mr-2"></i>Mulai
                         </button>
                         <button onclick="pausePomodoro()" id="pomodoro-pause"
-                            class="neumorphic px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform hidden">
+                            class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform hidden text-sm md:text-base">
                             <i class="fas fa-pause mr-2"></i>Jeda
                         </button>
                         <button onclick="resetPomodoro()"
-                            class="neumorphic px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
+                            class="neumorphic px-4 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-redo mr-2"></i>Reset
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4 mt-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8 w-full max-w-lg px-4">
                         <button onclick="setPomodoroTime(25)"
                             class="glass-morphism px-6 py-3 rounded-xl text-white hover:bg-white/20 transition">
                             <i class="fas fa-briefcase mr-2"></i>Kerja 25m
@@ -538,84 +677,84 @@
             </div>
 
             <!-- Habits Section -->
-            <div id="habits-section" class="tab-content h-full hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-white">Habit Tracker</h2>
+            <div id="habits-section" class="tab-content flex-1 flex flex-col hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-6 gap-2 md:gap-3">
+                    <h2 class="text-xl md:text-3xl font-bold text-white">Habit Tracker</h2>
                     <button onclick="addHabit()"
-                        class="neumorphic px-6 py-3 rounded-xl text-white hover:scale-105 transition-transform">
-                        <i class="fas fa-plus mr-2"></i>Tambah Habit
+                        class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base whitespace-nowrap">
+                        <i class="fas fa-plus mr-2"></i><span class="hidden sm:inline">Tambah </span>Habit
                     </button>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3 md:mb-4">
                     <input type="text" id="new-habit-input" placeholder="Nama habit baru..."
-                        class="w-full px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30"
+                        class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/30 text-sm md:text-base"
                         onkeypress="if(event.key === 'Enter') addHabit()">
                 </div>
 
                 <div id="habits-container"
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto custom-scrollbar"
-                    style="max-height: calc(100% - 140px);">
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 overflow-y-auto custom-scrollbar flex-1"
+                    style="min-height: 0;">
                     <!-- Habits will be added here dynamically -->
                 </div>
             </div>
 
             <!-- Calendar Section -->
-            <div id="calendar-section" class="tab-content h-full hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-white">Kalender</h2>
+            <div id="calendar-section" class="tab-content flex-1 flex flex-col hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <h2 class="text-xl md:text-3xl font-bold text-white">Kalender</h2>
                     <div class="flex gap-2">
                         <button onclick="previousMonth()"
-                            class="neumorphic px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform">
+                            class="neumorphic px-3 md:px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span id="current-month" class="px-4 py-2 text-white font-semibold"></span>
+                        <span id="current-month" class="px-3 md:px-4 py-2 text-white font-semibold text-sm md:text-base"></span>
                         <button onclick="nextMonth()"
-                            class="neumorphic px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform">
+                            class="neumorphic px-3 md:px-4 py-2 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-7 gap-2 mb-2">
-                    <div class="text-center text-white font-semibold py-2">Min</div>
-                    <div class="text-center text-white font-semibold py-2">Sen</div>
-                    <div class="text-center text-white font-semibold py-2">Sel</div>
-                    <div class="text-center text-white font-semibold py-2">Rab</div>
-                    <div class="text-center text-white font-semibold py-2">Kam</div>
-                    <div class="text-center text-white font-semibold py-2">Jum</div>
-                    <div class="text-center text-white font-semibold py-2">Sab</div>
+                <div class="grid grid-cols-7 gap-1 md:gap-2 mb-2">
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Min</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Sen</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Sel</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Rab</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Kam</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Jum</div>
+                    <div class="text-center text-white font-semibold py-2 text-xs md:text-base">Sab</div>
                 </div>
 
-                <div id="calendar-days" class="grid grid-cols-7 gap-2 overflow-y-auto custom-scrollbar"
-                    style="max-height: calc(100% - 140px);">
+                <div id="calendar-days" class="grid grid-cols-7 gap-1 md:gap-2 overflow-y-auto custom-scrollbar flex-1"
+                    style="min-height: 0;">
                     <!-- Calendar days will be added here dynamically -->
                 </div>
             </div>
 
             <!-- Mood Section -->
-            <div id="mood-section" class="tab-content h-full hidden">
-                <div class="flex flex-col items-center justify-center h-full">
-                    <h2 class="text-4xl font-bold text-white mb-8">Bagaimana Perasaan Anda Hari Ini?</h2>
+            <div id="mood-section" class="tab-content flex-1 flex flex-col hidden">
+                <div class="flex flex-col items-center justify-center h-full py-4 px-2">
+                    <h2 class="text-xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">Bagaimana Perasaan Anda Hari Ini?</h2>
 
-                    <div class="flex gap-6 mb-8">
-                        <span class="mood-emoji" onclick="setMood('very-sad')" data-mood="very-sad">😢</span>
-                        <span class="mood-emoji" onclick="setMood('sad')" data-mood="sad">😔</span>
-                        <span class="mood-emoji" onclick="setMood('neutral')" data-mood="neutral">😐</span>
-                        <span class="mood-emoji" onclick="setMood('happy')" data-mood="happy">😊</span>
-                        <span class="mood-emoji" onclick="setMood('very-happy')" data-mood="very-happy">😄</span>
+                    <div class="flex gap-3 md:gap-6 mb-6 md:mb-8">
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('very-sad')" data-mood="very-sad">😢</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('sad')" data-mood="sad">😔</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('neutral')" data-mood="neutral">😐</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('happy')" data-mood="happy">😊</span>
+                        <span class="mood-emoji text-3xl md:text-5xl" onclick="setMood('very-happy')" data-mood="very-happy">😄</span>
                     </div>
 
                     <textarea id="mood-note" placeholder="Tulis catatan tentang perasaan Anda..."
-                        class="w-full max-w-md px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none mb-4"
+                        class="w-full max-w-md px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none mb-4 text-sm md:text-base"
                         rows="4"></textarea>
 
                     <button onclick="saveMood()"
-                        class="neumorphic px-8 py-3 rounded-xl text-white hover:scale-105 transition-transform">
+                        class="neumorphic px-6 md:px-8 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                         <i class="fas fa-save mr-2"></i>Simpan Mood
                     </button>
 
-                    <div class="mt-8 glass-morphism rounded-xl p-6 w-full max-w-2xl">
+                    <div class="mt-6 md:mt-8 glass-morphism rounded-xl p-4 md:p-6 w-full max-w-2xl">
                         <h3 class="text-white font-semibold mb-4">Mood Tracking 7 Hari Terakhir</h3>
                         <div id="mood-chart" class="flex justify-around items-end h-32">
                             <!-- Mood chart will be added here dynamically -->
@@ -628,26 +767,26 @@
 
     <!-- Note Modal -->
     <div id="note-modal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center modal-overlay">
-        <div class="glass-morphism rounded-2xl p-6 w-full max-w-2xl mx-4 rotate-3d modal-content">
-            <h3 class="text-2xl font-bold text-white mb-4">Edit Catatan</h3>
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center modal-overlay p-4 z-50">
+        <div class="glass-morphism rounded-xl md:rounded-2xl p-4 md:p-6 w-full max-w-2xl mx-auto rotate-3d modal-content max-h-screen overflow-y-auto">
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Edit Catatan</h3>
             <input type="text" id="note-title" placeholder="Judul catatan..."
-                class="w-full px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none mb-4">
-            <select id="note-category" class="w-full px-4 py-3 rounded-xl glass-morphism text-white outline-none mb-4">
+                class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none mb-3 md:mb-4 text-sm md:text-base">
+            <select id="note-category" class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white outline-none mb-3 md:mb-4 text-sm md:text-base">
                 <option value="personal">Personal</option>
                 <option value="work">Pekerjaan</option>
                 <option value="ideas">Ide</option>
                 <option value="important">Penting</option>
             </select>
-            <textarea id="note-content" placeholder="Isi catatan..." rows="10"
-                class="w-full px-4 py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none custom-scrollbar"></textarea>
-            <div class="flex justify-end gap-3 mt-4">
+            <textarea id="note-content" placeholder="Isi catatan..." rows="8"
+                class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass-morphism text-white placeholder-white/60 outline-none resize-none custom-scrollbar text-sm md:text-base"></textarea>
+            <div class="flex flex-col sm:flex-row justify-end gap-2 md:gap-3 mt-3 md:mt-4">
                 <button onclick="closeNoteModal()"
-                    class="px-6 py-3 rounded-xl glass-morphism text-white hover:bg-white/20 transition">
+                    class="px-4 md:px-6 py-2 md:py-3 rounded-xl glass-morphism text-white hover:bg-white/20 transition text-sm md:text-base">
                     Batal
                 </button>
                 <button onclick="saveNote()"
-                    class="neumorphic px-6 py-3 rounded-xl text-white hover:scale-105 transition-transform">
+                    class="neumorphic px-4 md:px-6 py-2 md:py-3 rounded-xl text-white hover:scale-105 transition-transform text-sm md:text-base">
                     <i class="fas fa-save mr-2"></i>Simpan
                 </button>
             </div>
@@ -722,6 +861,29 @@
                             importData();
                             break;
                     }
+                }
+                
+                // ESC to close mobile menu
+                if (e.key === 'Escape') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('mobile-open')) {
+                        toggleMobileMenu();
+                    }
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    // Reset mobile menu state on desktop
+                    const sidebar = document.getElementById('sidebar');
+                    const backdrop = document.getElementById('mobile-backdrop');
+                    const hamburger = document.getElementById('mobile-menu-toggle');
+                    
+                    sidebar.classList.remove('mobile-open');
+                    backdrop.classList.remove('active');
+                    document.body.style.overflow = '';
+                    hamburger.innerHTML = '<i class="fas fa-bars"></i>';
                 }
             });
         });
@@ -1016,6 +1178,26 @@
             });
         }
 
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const hamburger = document.getElementById('mobile-menu-toggle');
+            
+            // Toggle class untuk show/hide sidebar
+            sidebar.classList.toggle('mobile-open');
+            backdrop.classList.toggle('active');
+            
+            // Toggle body scroll
+            if (sidebar.classList.contains('mobile-open')) {
+                document.body.style.overflow = 'hidden';
+                hamburger.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                document.body.style.overflow = '';
+                hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        }
+
         // Tab switching
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(section => {
@@ -1028,6 +1210,12 @@
 
             document.getElementById(`${tab}-section`).classList.remove('hidden');
             document.getElementById(`${tab}-tab`).classList.add('tab-active');
+            
+            // Close mobile menu after selecting a tab
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth < 1024 && sidebar.classList.contains('mobile-open')) {
+                toggleMobileMenu();
+            }
         }
 
         // Notes functions
